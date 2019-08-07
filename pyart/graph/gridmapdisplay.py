@@ -203,9 +203,11 @@ class GridMapDisplay(object):
         if norm is not None: # if norm is set do not override with vmin/vmax
             vmin = vmax = None
 
-        pm = ds[field][0, level].plot.pcolormesh(x='lon', y='lat', cmap=cmap,
-                                                 vmin=vmin, vmax=vmax,
-                                                 add_colorbar=False, **kwargs)
+        pm = ds[field][0, level].plot.imshow(x='x', y='y', cmap=cmap,
+                                             vmin=vmin, vmax=vmax,
+                                             interpolation='none',
+                                             add_colorbar=False, 
+                                             **kwargs)
 
         self.mappables.append(pm)
         self.fields.append(field)
@@ -407,8 +409,10 @@ class GridMapDisplay(object):
         xd, yd = np.meshgrid(x_1d, z_1d)
         if norm is not None: # if norm is set do not override with vmin, vmax
             vmin = vmax = None
-        pm = ax.pcolormesh(xd, yd, data, vmin=vmin, vmax=vmax, norm=norm,
-                           cmap=cmap, **kwargs)
+        extent = [x_1d[0], x_1d[-1], z_1d[0], z_1d[-1]] 
+        pm = ax.imshow(data, vmin=vmin, vmax=vmax, norm=norm,
+                       cmap=cmap, interpolation='none', origin='lower',
+                       extent=extent, aspect='auto', **kwargs)
         self.mappables.append(pm)
         self.fields.append(field)
 
@@ -542,11 +546,14 @@ class GridMapDisplay(object):
             if len(z_1d) > 1:
                 z_1d = _interpolate_axes_edges(z_1d)
         xd, yd = np.meshgrid(y_1d, z_1d)
+        
+        extent = [y_1d[0], y_1d[-1], z_1d[0], z_1d[-1]]
 
         if norm is not None: # if norm is set do not override with vmin, vmax
             vmin = vmax = None
-        pm = ax.pcolormesh(xd, yd, data, vmin=vmin, vmax=vmax, norm=norm,
-                           cmap=cmap, **kwargs)
+        pm = ax.imshow(data, vmin=vmin, vmax=vmax, norm=norm,
+                       cmap=cmap, interpolation='none', origin='lower',
+                       aspect='auto', extent=extent, **kwargs)
         self.mappables.append(pm)
         self.fields.append(field)
 
